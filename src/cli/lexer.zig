@@ -5,7 +5,7 @@ const t = std.testing;
 pub const Token = union(enum) {
     opt: []const u8,
     shopt: []const u8,
-    arg: [:0]const u8,
+    val: [:0]const u8,
 };
 
 pub fn ArgLexer(comptime I: type) type {
@@ -43,7 +43,7 @@ pub fn ArgLexer(comptime I: type) type {
             }
             if (self.src.next()) |arg| {
                 if (self.meet_args_sep or arg[0] != '-') {
-                    return .{ .arg = arg };
+                    return .{ .val = arg };
                 }
                 if (arg.len >= 2 and arg[1] == '-') {
                     if (arg.len == 2) {
@@ -53,7 +53,7 @@ pub fn ArgLexer(comptime I: type) type {
                     return .{ .opt = arg[2..] };
                 }
                 if (arg.len == 1) {
-                    return .{ .arg = arg };
+                    return .{ .val = arg };
                 }
                 self.shopts = arg[1..];
                 return self._next();
@@ -96,13 +96,13 @@ test "lexer" {
     };
     var lexer = ArgLexer(ArgIteratorMock.init(&args));
     try t.expectEqualDeep(Token{ .opt = "opt" }, lexer.next() orelse unreachable);
-    try t.expectEqualDeep(Token{ .arg = "value" }, lexer.next() orelse unreachable);
+    try t.expectEqualDeep(Token{ .val = "value" }, lexer.next() orelse unreachable);
     try t.expectEqualDeep(Token{ .shopt = "o" }, lexer.next() orelse unreachable);
     try t.expectEqualDeep(Token{ .shopt = "p" }, lexer.next() orelse unreachable);
     try t.expectEqualDeep(Token{ .shopt = "q" }, lexer.next() orelse unreachable);
-    try t.expectEqualDeep(Token{ .arg = "path" }, lexer.next() orelse unreachable);
-    try t.expectEqualDeep(Token{ .arg = "arg" }, lexer.next() orelse unreachable);
-    try t.expectEqualDeep(Token{ .arg = "--now-not-option" }, lexer.next() orelse unreachable);
-    try t.expectEqualDeep(Token{ .arg = "--" }, lexer.next() orelse unreachable);
+    try t.expectEqualDeep(Token{ .val = "path" }, lexer.next() orelse unreachable);
+    try t.expectEqualDeep(Token{ .val = "arg" }, lexer.next() orelse unreachable);
+    try t.expectEqualDeep(Token{ .val = "--now-not-option" }, lexer.next() orelse unreachable);
+    try t.expectEqualDeep(Token{ .val = "--" }, lexer.next() orelse unreachable);
     try t.expect(lexer.next() == null);
 }

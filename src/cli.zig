@@ -25,8 +25,12 @@ pub const help = usage ++
     \\Example: trunner --time-limit 1000 -- python3 main.py
     \\
     \\General Options:
-    \\  -h, --help           Print this help and exit
-    \\  -v, --version        Print version information and exit
+    \\  -h, --help
+    \\      Print this help and exit
+    \\  -v, --version
+    \\      Print version information and exit
+    \\  --
+    \\      Do not intepret arguments as options anymore
     \\
 ;
 
@@ -69,8 +73,8 @@ pub fn parse(alloc: std.mem.Allocator) !Config {
     while (lexer.next()) |tok| {
         var option: Opt = undefined;
         switch (tok) {
-            Token.arg => |arg| {
-                try command.append(arg);
+            Token.val => |val| {
+                try command.append(val);
                 continue;
             },
             Token.opt => |opt| if (meta.stringToEnum(Opt, opt)) |known_opt| {
