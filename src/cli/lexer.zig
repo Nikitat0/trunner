@@ -15,7 +15,7 @@ pub fn ArgLexer(comptime I: type) type {
         src: I,
         shopts: []const u8 = "",
         buf: ?Token = null,
-        meet_args_sep: bool = false,
+        only_values: bool = false,
 
         pub fn init(src: I) Self {
             return .{ .src = src };
@@ -42,12 +42,12 @@ pub fn ArgLexer(comptime I: type) type {
                 return .{ .shopt = self.shopts[0..1] };
             }
             if (self.src.next()) |arg| {
-                if (self.meet_args_sep or arg[0] != '-') {
+                if (self.only_values or arg[0] != '-') {
                     return .{ .val = arg };
                 }
                 if (arg.len >= 2 and arg[1] == '-') {
                     if (arg.len == 2) {
-                        self.meet_args_sep = true;
+                        self.only_values = true;
                         return self._next();
                     }
                     return .{ .opt = arg[2..] };
