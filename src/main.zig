@@ -4,6 +4,9 @@ const cli = @import("./cli.zig");
 const sys = @import("./sys.zig");
 
 comptime {
+    const builtin = @import("builtin");
+    if (!builtin.is_test and builtin.os.tag != .linux)
+        @compileError("trunner cannot be built for OS other than Linux");
     _ = cli;
     _ = sys;
 }
