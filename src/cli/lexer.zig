@@ -94,7 +94,7 @@ test "lexer" {
         "--now-not-option",
         "--",
     };
-    var lexer = ArgLexer(ArgIteratorMock.init(&args));
+    var lexer = argLexer(ArgIteratorMock.init(&args));
     try t.expectEqualDeep(Token{ .opt = "opt" }, lexer.next() orelse unreachable);
     try t.expectEqualDeep(Token{ .val = "value" }, lexer.next() orelse unreachable);
     try t.expectEqualDeep(Token{ .shopt = "o" }, lexer.next() orelse unreachable);

@@ -5,14 +5,14 @@ const process = std.process;
 const ArgIteratorPosix = process.ArgIteratorPosix;
 const exit = process.exit;
 
-const clap_lexer = @import("./cli/lexer.zig");
-const argLexer = clap_lexer.argLexer;
-const Token = clap_lexer.Token;
+const cli_lexer = @import("./cli/lexer.zig");
+const argLexer = cli_lexer.argLexer;
+const Token = cli_lexer.Token;
 
 const Config = @import("./config.zig");
 
 comptime {
-    _ = clap_lexer;
+    _ = cli_lexer;
 }
 
 pub const usage =
