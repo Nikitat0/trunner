@@ -5,7 +5,7 @@ const t = std.testing;
 pub const Token = union(enum) {
     opt: []const u8,
     shopt: []const u8,
-    arg: []const u8,
+    arg: [:0]const u8,
 };
 
 pub fn ArgLexer(comptime I: type) type {
@@ -63,6 +63,10 @@ pub fn ArgLexer(comptime I: type) type {
     };
 }
 
+pub fn argLexer(src: anytype) ArgLexer(@TypeOf(src)) {
+    return ArgLexer(@TypeOf(src)).init(src);
+}
+
 const ArgIteratorMock = struct {
     args: [][:0]const u8,
 
@@ -90,7 +94,7 @@ test "lexer" {
         "--now-not-option",
         "--",
     };
-    var lexer = ArgLexer(ArgIteratorMock).init(ArgIteratorMock.init(&args));
+    var lexer = ArgLexer(ArgIteratorMock.init(&args));
     try t.expectEqualDeep(Token{ .opt = "opt" }, lexer.next() orelse unreachable);
     try t.expectEqualDeep(Token{ .arg = "value" }, lexer.next() orelse unreachable);
     try t.expectEqualDeep(Token{ .shopt = "o" }, lexer.next() orelse unreachable);
